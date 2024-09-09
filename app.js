@@ -146,7 +146,7 @@ const checkOUT = async (req, res) => {
   }
 
   try {
-    // const db = getFirestore()
+    const db = getFirestore()
     const usersRef = collection(db, "users")
     const q = query(usersRef, where("Phone", "==", Number(phone)))
 
