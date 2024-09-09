@@ -65,6 +65,7 @@ const fetchUsers = async (req, res) => {
   }
 }
 
+//CheckIN function
 const checkAndUpdateUserAccess = async (req, res) => {
   const { phone } = req.body
 
@@ -136,6 +137,7 @@ const checkAndUpdateUserAccess = async (req, res) => {
   }
 }
 
+//checkOUT function
 const checkOUT = async (req, res) => {
   const { phone } = req.body
 
@@ -144,7 +146,7 @@ const checkOUT = async (req, res) => {
   }
 
   try {
-    const db = getFirestore()
+    // const db = getFirestore()
     const usersRef = collection(db, "users")
     const q = query(usersRef, where("Phone", "==", Number(phone)))
 
@@ -157,21 +159,21 @@ const checkOUT = async (req, res) => {
     const userDoc = querySnapshot.docs[0]
     const userData = userDoc.data()
 
-    // 1. Update TimeOut in Firestore
-    const timeOut = serverTimestamp()
-    await updateDoc(userDoc.ref, {
-      TimeOut: timeOut,
-    })
-
-    // 2. Calculate Amount to be paid
+    // 1. Calculate Amount to be paid
     const timeIn = userData.TimeIn.toDate()
-    const timeOutDate = new Date() // Use current time as timeOut
-    const durationInMinutes = Math.ceil((timeOutDate - timeIn) / (1000 * 60))
+    const timeOut = new Date() // Use current time as timeOut
+    const durationInMinutes = Math.ceil((timeOut - timeIn) / (1000 * 60))
     const amountToPay = durationInMinutes * 1 // 1 Rs. per minute
 
-    // Fetch the updated user document
-    const updatedDoc = await getDocs(q)
-    const updatedUserData = updatedDoc.docs[0].data()
+    // 2. Update TimeOut and Amount_To_Pay in Firestore
+    await updateDoc(userDoc.ref, {
+      Access: false,
+      TimeOut: serverTimestamp(),
+    })
+
+    // 3. Fetch the updated user document
+    const updatedDocSnapshot = await getDoc(userDoc.ref)
+    const updatedUserData = updatedDocSnapshot.data()
 
     res.json({
       message: "User checked out successfully",
@@ -183,7 +185,7 @@ const checkOUT = async (req, res) => {
           ? updatedUserData.TimeOut.toDate()
           : null,
         durationInMinutes,
-        amountToPay,
+        amountToPay: updatedUserData.Amount_To_Pay,
       },
     })
   } catch (error) {
@@ -192,6 +194,7 @@ const checkOUT = async (req, res) => {
   }
 }
 
+//AMOUNT function
 const AMOUNT = async (req, res) => {
   const { phone } = req.body
 
