@@ -162,8 +162,8 @@ const checkOUT = async (req, res) => {
     // 1. Calculate Amount to be paid
     const timeIn = userData.TimeIn.toDate()
     const timeOut = new Date() // Use current time as timeOut
-    const durationInMinutes = Math.ceil((timeOut - timeIn) / (1000 * 60))
-    const amountToPay = durationInMinutes * 1 // 1 Rs. per minute
+    const durationInSeconds = Math.ceil((timeOut - timeIn) / 1000)
+    const amountToPay = durationInSeconds * 1 // 1 Rs. per second
 
     // 2. Update TimeOut and Amount_To_Pay in Firestore
     await updateDoc(userDoc.ref, {
@@ -184,7 +184,7 @@ const checkOUT = async (req, res) => {
         timeOut: updatedUserData.TimeOut
           ? updatedUserData.TimeOut.toDate()
           : null,
-        durationInMinutes,
+        durationInSeconds,
         amountToPay: updatedUserData.Amount_To_Pay,
       },
     })
