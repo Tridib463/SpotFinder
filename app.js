@@ -167,13 +167,13 @@ const checkOUT = async (req, res) => {
 
     // 2. Update TimeOut and Amount_To_Pay in Firestore
     await updateDoc(userDoc.ref, {
-      Access: false,
       TimeOut: serverTimestamp(),
+      Amount_To_Pay: amountToPay,
     })
 
     // 3. Fetch the updated user document
-    const updatedDocSnapshot = await getDoc(userDoc.ref)
-    const updatedUserData = updatedDocSnapshot.data()
+    const updatedQuerySnapshot = await getDocs(q)
+    const updatedUserData = updatedQuerySnapshot.docs[0].data()
 
     res.json({
       message: "User checked out successfully",
