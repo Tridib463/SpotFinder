@@ -205,7 +205,7 @@ const AMOUNT = async (req, res) => {
   try {
     // 3. Control the servo motor
     const rtdb = getDatabase()
-    const servoRef = ref(rtdb, "servoControl")
+    const servoRef = ref(rtdb, "servoControl1")
 
     // Set servo to 1
     await set(servoRef, 1)
