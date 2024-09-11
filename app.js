@@ -92,7 +92,7 @@ const checkAndUpdateUserAccess = async (req, res) => {
 
     // Control the servo motor
     const rtdb = getDatabase()
-    const servoRef = ref(rtdb, "servoControl")
+    const servoRef = ref(rtdb, "servoControl1")
 
     // Set servo to 1
     await set(servoRef, 1)
